@@ -4,5 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <algorithm>
+#include <sstream>
+#include <vector>
 
 #endif //PCH_H

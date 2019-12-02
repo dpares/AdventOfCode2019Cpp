@@ -37,7 +37,7 @@ int challengeB(std::ifstream& input)
 	return fuelSum;
 }
 
-int main()
+/*int main()
 {
 	std::ifstream input ("input/day1.txt", std::ifstream::in);
 
@@ -49,6 +49,6 @@ int main()
 
 	totalFuel = challengeB(input);
 	std::cout << "Total fuel for challenge B: " << totalFuel << std::endl;
-}
+}*/
 
 
