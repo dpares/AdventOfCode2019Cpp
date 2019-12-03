@@ -88,7 +88,7 @@ void challengeB(std::vector<int>& memory, std::ifstream& input, int& noun, int& 
 	}
 }
 
-int main()
+/*int main()
 {
 	std::ifstream input("input/day2.txt", std::ifstream::in);
 	std::vector<int> memory;
@@ -103,4 +103,4 @@ int main()
 	int verb = 0;
 	challengeB(memory, input, noun, verb);
 	std::cout << "Challenge B result: " << 100 * noun + verb << std::endl;
-}
+}*/
