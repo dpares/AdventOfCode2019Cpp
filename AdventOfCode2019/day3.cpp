@@ -191,7 +191,7 @@ int challengeD(std::ifstream& input)
 	return findShortestCollisionPath(wirePath1, wirePath2);
 }
 
-int main()
+/*int main()
 {
 	std::ifstream input("input/day3.txt", std::ifstream::in);
 
@@ -201,4 +201,4 @@ int main()
 	input.seekg(0);
 
 	std::cout << "Challenge D result: " << challengeD(input) << std::endl;
-}
+}*/
