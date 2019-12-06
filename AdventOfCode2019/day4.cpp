@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include "day4.h"
+
 int getValidCombinationsA(const std::vector<int>& lower, const std::vector<int>& upper, int prevDigit, int curDigitIdx, bool consecutiveDigits, bool arePrevDigitsUpper, bool arePrevDigitsLower)
 {
 	if (curDigitIdx == lower.size())
@@ -97,36 +99,24 @@ void parseVector(std::ifstream& input, std::vector<int>& vector)
 	}
 }
 
-int challengeE(std::ifstream& input)
+void Day4::ChallengeA()
 {
 	int numPasswords = 0;
 	std::vector<int> lowerLimit, upperLimit;
 	
-	parseVector(input, lowerLimit);
-	parseVector(input, upperLimit);
+	parseVector(m_Input, lowerLimit);
+	parseVector(m_Input, upperLimit);
 
-	return getValidCombinationsA(lowerLimit, upperLimit, -1, 0, false, true, true);
+	std::cout << "Result for Challenge A: " << getValidCombinationsA(lowerLimit, upperLimit, -1, 0, false, true, true) << std::endl;
 }
 
-int challengeF(std::ifstream& input)
+void Day4::ChallengeB()
 {
 	int numPasswords = 0;
 	std::vector<int> lowerLimit, upperLimit;
 
-	parseVector(input, lowerLimit);
-	parseVector(input, upperLimit);
+	parseVector(m_Input, lowerLimit);
+	parseVector(m_Input, upperLimit);
 
-	return getValidCombinationsB(lowerLimit, upperLimit, -1, 0, 0, false, true, true);
-}
-
-int main()
-{
-	std::ifstream input("input/day4.txt", std::ifstream::in);
-
-	std::cout << "Challenge E result: " << challengeE(input) << std::endl;
-
-	input.clear();
-	input.seekg(0);
-
-	std::cout << "Challenge F result: " << challengeF(input) << std::endl;
+	std::cout << "Result for Challenge B: " << getValidCombinationsB(lowerLimit, upperLimit, -1, 0, 0, false, true, true) << std::endl;
 }

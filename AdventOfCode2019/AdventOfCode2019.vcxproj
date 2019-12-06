@@ -151,13 +151,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="challengefactory.h" />
+    <ClInclude Include="day1.h" />
+    <ClInclude Include="day2.h" />
+    <ClInclude Include="day3.h" />
+    <ClInclude Include="day4.h" />
+    <ClInclude Include="dailychallenge.h" />
+    <ClInclude Include="intcodecomputer.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="challengefactory.cpp" />
+    <ClCompile Include="dailychallenge.cpp" />
     <ClCompile Include="day1.cpp" />
     <ClCompile Include="day2.cpp" />
     <ClCompile Include="day3.cpp" />
     <ClCompile Include="day4.cpp" />
+    <ClCompile Include="intcodecomputer.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

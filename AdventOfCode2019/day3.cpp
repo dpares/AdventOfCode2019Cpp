@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include "day3.h"
+
 void buildPath(std::string input, std::vector<std::pair<int, int>>& memory)
 {
 	std::istringstream inputStream{ input };
@@ -100,18 +102,18 @@ int findNearestCollision(const std::vector<std::pair<int, int>>& wirePath1, cons
 	return distanceToCollision;
 }
 
-int challengeC(std::ifstream& input)
+void Day3::ChallengeA()
 {
 	std::vector<std::pair<int, int>> wirePath1, wirePath2;
 	std::string inputString;
 
-	input >> inputString;
+	m_Input >> inputString;
 	buildPath(inputString, wirePath1);
 
-	input >> inputString;
+	m_Input >> inputString;
 	buildPath(inputString, wirePath2);
 
-	return findNearestCollision(wirePath1, wirePath2);
+	std::cout << "Challenge A result: " << findNearestCollision(wirePath1, wirePath2) << std::endl;
 }
 
 int findShortestCollisionPath(const std::vector<std::pair<int, int>>& wirePath1, const std::vector<std::pair<int, int>>& wirePath2)
@@ -177,28 +179,16 @@ int findShortestCollisionPath(const std::vector<std::pair<int, int>>& wirePath1,
 	return minPathLength;
 }
 
-int challengeD(std::ifstream& input)
+void Day3::ChallengeB()
 {
 	std::vector<std::pair<int, int>> wirePath1, wirePath2;
 	std::string inputString;
 
-	input >> inputString;
+	m_Input >> inputString;
 	buildPath(inputString, wirePath1);
 
-	input >> inputString;
+	m_Input >> inputString;
 	buildPath(inputString, wirePath2);
 
-	return findShortestCollisionPath(wirePath1, wirePath2);
+	std::cout << "Challenge B result: " << findShortestCollisionPath(wirePath1, wirePath2) << std::endl;
 }
-
-/*int main()
-{
-	std::ifstream input("input/day3.txt", std::ifstream::in);
-
-	std::cout << "Challenge C result: " << challengeC(input) << std::endl;
-
-	input.clear();
-	input.seekg(0);
-
-	std::cout << "Challenge D result: " << challengeD(input) << std::endl;
-}*/

@@ -1,54 +1,42 @@
 #include "pch.h"
 
-int requiredFuel(int mass)
+#include "day1.h"
+
+int Day1::RequiredFuel(int mass)
 {
 	return std::max(0, static_cast<int>(mass / 3.0f) - 2);
 }
 
-int challengeA(std::ifstream& input)
+void Day1::ChallengeA()
 {
 	int moduleMass = 0;
 	int fuelSum = 0;
 
-	while (input >> moduleMass)
+	while (m_Input >> moduleMass)
 	{
-		const int moduleFuel = requiredFuel(moduleMass);
+		const int moduleFuel = RequiredFuel(moduleMass);
 		fuelSum += moduleFuel;
 	}
 
-	return fuelSum;
+	std::cout << "Challenge A result: " << fuelSum << std::endl;
 }
 
-int challengeB(std::ifstream& input)
+void Day1::ChallengeB()
 {
 	int moduleMass = 0;
 	int fuelSum = 0;
 
-	while (input >> moduleMass)
+	while (m_Input >> moduleMass)
 	{
-		int moduleFuel = requiredFuel(moduleMass);
+		int moduleFuel = RequiredFuel(moduleMass);
 		while (moduleFuel > 0)
 		{
 			fuelSum += moduleFuel;
-			moduleFuel = requiredFuel(moduleFuel);
+			moduleFuel = RequiredFuel(moduleFuel);
 		}
 	}
 
-	return fuelSum;
+	std::cout << "Challenge B result: " << fuelSum << std::endl;
 }
-
-/*int main()
-{
-	std::ifstream input ("input/day1.txt", std::ifstream::in);
-
-	int totalFuel = challengeA(input);
-	std::cout << "Total fuel for challenge A: " << totalFuel << std::endl;
-
-	input.clear();
-	input.seekg(0);
-
-	totalFuel = challengeB(input);
-	std::cout << "Total fuel for challenge B: " << totalFuel << std::endl;
-}*/
 
 
