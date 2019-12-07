@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dailychallenge.h"
+
 #include "intcodecomputer.h"
 
 class Day5 : public DailyChallenge
