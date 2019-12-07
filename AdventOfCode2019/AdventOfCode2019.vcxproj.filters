@@ -39,6 +39,9 @@
     <ClInclude Include="intcodecomputer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="day5.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -66,6 +69,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="intcodecomputer.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="day5.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

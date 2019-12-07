@@ -2,12 +2,15 @@
 
 #include "intcodecomputer.h"
 
-void IntcodeComputer::LoadMemory(std::string input)
+#define LOG_INTCODE 0
+
+void IntcodeComputer::LoadProgram(std::string input)
 {
 	std::istringstream inputStream{ input };
 	int newElement;
 
 	m_Memory.clear();
+	m_InstructionPointer = 0;
 
 	while (inputStream >> newElement)
 	{
@@ -19,44 +22,171 @@ void IntcodeComputer::LoadMemory(std::string input)
 	}
 }
 
-int IntcodeComputer::GetValue(int pos) const
+int IntcodeComputer::GetResult() const
 {
-	return m_Memory[pos];
+	return m_Memory[0];
 }
 
-void IntcodeComputer::ReplaceValues(int noun, int verb)
+void IntcodeComputer::SetNounAndVerb(int noun, int verb)
 {
 	m_Memory[1] = noun;
 	m_Memory[2] = verb;
 }
 
-void IntcodeComputer::ExecuteProgram(int startingPos)
+void IntcodeComputer::ExecuteProgram()
 {
-	if (startingPos > m_Memory.size())
+	while (m_InstructionPointer < m_Memory.size())
 	{
-		return;
-	}
+		const int firstValue = m_Memory[m_InstructionPointer];
+		const int opcode = firstValue % 100;
+		const int paramModes = firstValue / 100;
+		ParameterList params;
 
-	const int opcode = m_Memory[startingPos];
-	if (opcode == 1 || opcode == 2)
-	{
-		const int lhsPos = m_Memory[startingPos + 1];
-		const int rhsPos = m_Memory[startingPos + 2];
-		const int resultPos = m_Memory[startingPos + 3];
-
-		if (opcode == 1)
+		switch (opcode)
 		{
-			m_Memory[resultPos] = m_Memory[lhsPos] + m_Memory[rhsPos];
-		}
-		else
-		{
-			m_Memory[resultPos] = m_Memory[lhsPos] * m_Memory[rhsPos];
+			case 1: // Add
+			{
+				params = GetNextInstructionParams(3, paramModes);
+				const int lhs = GetParamValue(params[0]);
+				const int rhs = GetParamValue(params[1]);
+				int& memPos = GetParamValue(params[2]);
+
+#if LOG_INTCODE
+				std::cout << "MEM[" << memPos << "] = " << lhs << " + " << rhs << std::endl;
+#endif
+				memPos = lhs + rhs;
+
+				break;
+			}
+			case 2: // Multiply
+			{
+				params = GetNextInstructionParams(3, paramModes);
+				const int lhs = GetParamValue(params[0]);
+				const int rhs = GetParamValue(params[1]);
+				int& memPos = GetParamValue(params[2]);
+
+#if LOG_INTCODE
+				std::cout << "MEM[" << memPos << "] = " << lhs << " * " << rhs << std::endl;
+#endif
+				memPos = lhs * rhs;
+				break;
+			}
+			case 3: // Get Input
+			{
+				params = GetNextInstructionParams(1, paramModes);
+				int& memPos = GetParamValue(params[0]);
+				int input;
+
+				std::cout << "Input: ";
+				std::cin >> input;
+
+#if LOG_INTCODE
+				std::cout << "MEM[" << memPos << "] = " << input << std::endl;
+#endif
+				memPos = input;
+				break;
+			}
+			case 4: // Print Output
+			{
+				params = GetNextInstructionParams(1, paramModes);
+				std::cout << "Output: " << GetParamValue(params[0]) << std::endl;
+				break;
+			}
+			case 5: // Jump If True
+			{
+				params = GetNextInstructionParams(2, paramModes);
+				const int testVal = GetParamValue(params[0]);
+				const int newIPtr = GetParamValue(params[1]);
+
+#if LOG_INTCODE
+				std::cout << "IF " << testVal << " != 0 GOTO " << newIPtr << (testVal != 0 ? " (TRUE)" : " (FALSE)") << std::endl;
+
+#endif
+
+				if (testVal != 0)
+				{
+					m_InstructionPointer = newIPtr;
+					continue;
+				}
+				break;
+			}
+			case 6: // Jump If False
+			{
+				params = GetNextInstructionParams(2, paramModes);
+				const int testVal = GetParamValue(params[0]);
+				const int newIPtr = GetParamValue(params[1]);
+
+#if LOG_INTCODE
+				std::cout << "IF " << testVal << " == 0 GOTO " << newIPtr << (testVal == 0 ? " (TRUE)" : " (FALSE)") << std::endl;
+#endif
+
+				if (testVal== 0)
+				{
+					m_InstructionPointer = newIPtr;
+					continue;
+				}
+				break;
+			}
+			case 7: // Less Than
+			{
+				params = GetNextInstructionParams(3, paramModes);
+				const int lhs = GetParamValue(params[0]);
+				const int rhs = GetParamValue(params[1]);
+				int& memPos = GetParamValue(params[2]);
+
+#if LOG_INTCODE
+				std::cout << "MEM[" << memPos << "] = " << lhs << " < " << rhs << (lhs < rhs ? " (TRUE)" : " (FALSE)") << std::endl;
+#endif
+
+				memPos = lhs < rhs ? 1 : 0;
+				break;
+			}
+			case 8: // Equals
+			{
+				params = GetNextInstructionParams(3, paramModes);
+				const int lhs = GetParamValue(params[0]);
+				const int rhs = GetParamValue(params[1]);
+				int& memPos = GetParamValue(params[2]);
+
+#if LOG_INTCODE
+				std::cout << "MEM[" << memPos << "] = " << lhs << " == " << rhs << (lhs == rhs ? " (TRUE)" : " (FALSE)") << std::endl;
+#endif
+
+				memPos = lhs == rhs ? 1 : 0;
+				break;
+			}
+			case 99: // Halt And Catch Fire
+			{
+				std::cout << "**PROGRAM HALTED**" << std::endl;
+				return;
+				break;
+			}
 		}
 
-		ExecuteProgram(startingPos + 4);
+		m_InstructionPointer += params.size() + 1;
 	}
-	else if (opcode == 99)
+}
+
+IntcodeComputer::ParameterList IntcodeComputer::GetNextInstructionParams(int numParams, int parameterModes)
+{
+	ParameterList parameters;
+	parameters.reserve(numParams);
+
+	for (int paramOffset = 1; paramOffset <= numParams; ++paramOffset)
 	{
-		return;
+		const int nextParamMode = parameterModes % 10;
+		
+		const ParameterMode mode = nextParamMode == 0 ? ParameterMode::Position : ParameterMode::Immediate;
+		const int value = m_Memory[m_InstructionPointer + paramOffset];
+		parameters.emplace_back(mode, value);
+
+		parameterModes /= 10;
 	}
+
+	return parameters;
+}
+
+int& IntcodeComputer::GetParamValue(Parameter param)
+{
+	return param.first == ParameterMode::Position ? m_Memory[param.second] : param.second;
 }

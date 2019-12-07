@@ -7,11 +7,11 @@ void Day2::ChallengeA()
 	std::string inputString;
 	m_Input >> inputString;
 
-	m_Computer.LoadMemory(inputString);
-	m_Computer.ReplaceValues(12, 2);
-	m_Computer.ExecuteProgram(0);
+	m_Computer.LoadProgram(inputString);
+	m_Computer.SetNounAndVerb(12, 2);
+	m_Computer.ExecuteProgram();
 
-	std::cout << "Challenge A result: " << m_Computer.GetValue(0) << std::endl;
+	std::cout << "Challenge A result: " << m_Computer.GetResult() << std::endl;
 }
 
 void Day2::ChallengeB()
@@ -26,11 +26,11 @@ void Day2::ChallengeB()
 	{
 		for (int j = 0; j < 100; ++j)
 		{
-			m_Computer.LoadMemory(inputString);
-			m_Computer.ReplaceValues(i, j);
-			m_Computer.ExecuteProgram(0);
+			m_Computer.LoadProgram(inputString);
+			m_Computer.SetNounAndVerb(i, j);
+			m_Computer.ExecuteProgram();
 
-			if (m_Computer.GetValue(0) == 19690720)
+			if (m_Computer.GetResult() == 19690720)
 			{
 				noun = i;
 				verb = j;
