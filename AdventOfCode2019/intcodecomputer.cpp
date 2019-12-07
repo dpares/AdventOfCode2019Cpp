@@ -6,18 +6,18 @@
 
 void IntcodeComputer::LoadProgram(std::string input)
 {
-	std::istringstream inputStream{ input };
+	std::istringstream stringStream{ input };
 	int newElement;
 
 	m_Memory.clear();
 	m_InstructionPointer = 0;
 
-	while (inputStream >> newElement)
+	while (stringStream >> newElement)
 	{
 		m_Memory.push_back(newElement);
-		if (inputStream.peek() == ',')
+		if (stringStream.peek() == ',')
 		{
-			inputStream.ignore();
+			stringStream.ignore();
 		}
 	}
 }
@@ -35,6 +35,12 @@ void IntcodeComputer::SetNounAndVerb(int noun, int verb)
 
 void IntcodeComputer::ExecuteProgram()
 {
+	if (m_PausedInstructionPointer != -1)
+	{
+		m_InstructionPointer = m_PausedInstructionPointer;
+		m_PausedInstructionPointer = -1;
+	}
+
 	while (m_InstructionPointer < m_Memory.size())
 	{
 		const int firstValue = m_Memory[m_InstructionPointer];
@@ -77,8 +83,31 @@ void IntcodeComputer::ExecuteProgram()
 				int& memPos = GetParamValue(params[0]);
 				int input;
 
-				std::cout << "Input: ";
-				std::cin >> input;
+				if (m_AmplifiersPipe != nullptr)
+				{
+					if (m_AmplifiersPipe->empty())
+					{
+						m_PausedInstructionPointer = m_InstructionPointer;
+						return;
+					}
+
+					input = m_AmplifiersPipe->front();
+					m_AmplifiersPipe->pop_front();
+
+					if (m_HasReceivedFirstInput == false)
+					{
+						m_HasReceivedFirstInput = true;
+						if (input >= 5 && input <= 9)
+						{
+							m_IsInFeedbackLoop = true;
+						}
+					}
+				}
+				else
+				{
+					std::cout << "Input: ";
+					std::cin >> input;
+				}
 
 #if LOG_INTCODE
 				std::cout << "MEM[" << memPos << "] = " << input << std::endl;
@@ -89,7 +118,22 @@ void IntcodeComputer::ExecuteProgram()
 			case 4: // Print Output
 			{
 				params = GetNextInstructionParams(1, paramModes);
-				std::cout << "Output: " << GetParamValue(params[0]) << std::endl;
+				const int value = GetParamValue(params[0]);
+
+				if (m_AmplifiersPipe != nullptr)
+				{
+					m_AmplifiersPipe->push_back(value);
+					if (m_IsInFeedbackLoop)
+					{
+						m_PausedInstructionPointer = m_InstructionPointer + 2;
+						return;
+					}
+				}
+				else
+				{
+					std::cout << "Output: " << value << std::endl;
+				}
+
 				break;
 			}
 			case 5: // Jump If True
@@ -157,7 +201,11 @@ void IntcodeComputer::ExecuteProgram()
 			}
 			case 99: // Halt And Catch Fire
 			{
-				std::cout << "**PROGRAM HALTED**" << std::endl;
+				if (m_AmplifiersPipe == nullptr)
+				{
+					std::cout << "**PROGRAM HALTED**" << std::endl;
+				}
+				m_HasHalted = true;
 				return;
 				break;
 			}
@@ -189,4 +237,13 @@ IntcodeComputer::ParameterList IntcodeComputer::GetNextInstructionParams(int num
 int& IntcodeComputer::GetParamValue(Parameter param)
 {
 	return param.first == ParameterMode::Position ? m_Memory[param.second] : param.second;
+}
+
+void IntcodeComputer::OutputMemory()
+{
+	for (const int& value : m_Memory)
+	{
+		std::cout << value << ",";
+	}
+	std::cout << std::endl;
 }
