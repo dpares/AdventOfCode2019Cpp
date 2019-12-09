@@ -7,10 +7,11 @@
 void IntcodeComputer::LoadProgram(std::string input)
 {
 	std::istringstream stringStream{ input };
-	int newElement;
+	Type newElement;
 
 	m_Memory.clear();
 	m_InstructionPointer = 0;
+	m_RelativeBase = 0;
 
 	while (stringStream >> newElement)
 	{
@@ -22,12 +23,12 @@ void IntcodeComputer::LoadProgram(std::string input)
 	}
 }
 
-int IntcodeComputer::GetResult() const
+IntcodeComputer::Type IntcodeComputer::GetResult() const
 {
 	return m_Memory[0];
 }
 
-void IntcodeComputer::SetNounAndVerb(int noun, int verb)
+void IntcodeComputer::SetNounAndVerb(Type noun, Type verb)
 {
 	m_Memory[1] = noun;
 	m_Memory[2] = verb;
@@ -43,9 +44,9 @@ void IntcodeComputer::ExecuteProgram()
 
 	while (m_InstructionPointer < m_Memory.size())
 	{
-		const int firstValue = m_Memory[m_InstructionPointer];
-		const int opcode = firstValue % 100;
-		const int paramModes = firstValue / 100;
+		const Type firstValue = m_Memory[m_InstructionPointer];
+		const Type opcode = firstValue % 100;
+		const Type paramModes = firstValue / 100;
 		ParameterList params;
 
 		switch (opcode)
@@ -53,9 +54,9 @@ void IntcodeComputer::ExecuteProgram()
 			case 1: // Add
 			{
 				params = GetNextInstructionParams(3, paramModes);
-				const int lhs = GetParamValue(params[0]);
-				const int rhs = GetParamValue(params[1]);
-				int& memPos = GetParamValue(params[2]);
+				const Type lhs = GetParamValue(params[0]);
+				const Type rhs = GetParamValue(params[1]);
+				Type& memPos = GetParamValue(params[2]);
 
 #if LOG_INTCODE
 				std::cout << "MEM[" << memPos << "] = " << lhs << " + " << rhs << std::endl;
@@ -67,9 +68,9 @@ void IntcodeComputer::ExecuteProgram()
 			case 2: // Multiply
 			{
 				params = GetNextInstructionParams(3, paramModes);
-				const int lhs = GetParamValue(params[0]);
-				const int rhs = GetParamValue(params[1]);
-				int& memPos = GetParamValue(params[2]);
+				const Type lhs = GetParamValue(params[0]);
+				const Type rhs = GetParamValue(params[1]);
+				Type& memPos = GetParamValue(params[2]);
 
 #if LOG_INTCODE
 				std::cout << "MEM[" << memPos << "] = " << lhs << " * " << rhs << std::endl;
@@ -80,8 +81,8 @@ void IntcodeComputer::ExecuteProgram()
 			case 3: // Get Input
 			{
 				params = GetNextInstructionParams(1, paramModes);
-				int& memPos = GetParamValue(params[0]);
-				int input;
+				Type& memPos = GetParamValue(params[0]);
+				Type input;
 
 				if (m_AmplifiersPipe != nullptr)
 				{
@@ -118,7 +119,7 @@ void IntcodeComputer::ExecuteProgram()
 			case 4: // Print Output
 			{
 				params = GetNextInstructionParams(1, paramModes);
-				const int value = GetParamValue(params[0]);
+				const Type value = GetParamValue(params[0]);
 
 				if (m_AmplifiersPipe != nullptr)
 				{
@@ -139,8 +140,8 @@ void IntcodeComputer::ExecuteProgram()
 			case 5: // Jump If True
 			{
 				params = GetNextInstructionParams(2, paramModes);
-				const int testVal = GetParamValue(params[0]);
-				const int newIPtr = GetParamValue(params[1]);
+				const Type testVal = GetParamValue(params[0]);
+				const Type newIPtr = GetParamValue(params[1]);
 
 #if LOG_INTCODE
 				std::cout << "IF " << testVal << " != 0 GOTO " << newIPtr << (testVal != 0 ? " (TRUE)" : " (FALSE)") << std::endl;
@@ -157,8 +158,8 @@ void IntcodeComputer::ExecuteProgram()
 			case 6: // Jump If False
 			{
 				params = GetNextInstructionParams(2, paramModes);
-				const int testVal = GetParamValue(params[0]);
-				const int newIPtr = GetParamValue(params[1]);
+				const Type testVal = GetParamValue(params[0]);
+				const Type newIPtr = GetParamValue(params[1]);
 
 #if LOG_INTCODE
 				std::cout << "IF " << testVal << " == 0 GOTO " << newIPtr << (testVal == 0 ? " (TRUE)" : " (FALSE)") << std::endl;
@@ -174,9 +175,9 @@ void IntcodeComputer::ExecuteProgram()
 			case 7: // Less Than
 			{
 				params = GetNextInstructionParams(3, paramModes);
-				const int lhs = GetParamValue(params[0]);
-				const int rhs = GetParamValue(params[1]);
-				int& memPos = GetParamValue(params[2]);
+				const Type lhs = GetParamValue(params[0]);
+				const Type rhs = GetParamValue(params[1]);
+				Type& memPos = GetParamValue(params[2]);
 
 #if LOG_INTCODE
 				std::cout << "MEM[" << memPos << "] = " << lhs << " < " << rhs << (lhs < rhs ? " (TRUE)" : " (FALSE)") << std::endl;
@@ -188,15 +189,27 @@ void IntcodeComputer::ExecuteProgram()
 			case 8: // Equals
 			{
 				params = GetNextInstructionParams(3, paramModes);
-				const int lhs = GetParamValue(params[0]);
-				const int rhs = GetParamValue(params[1]);
-				int& memPos = GetParamValue(params[2]);
+				const Type lhs = GetParamValue(params[0]);
+				const Type rhs = GetParamValue(params[1]);
+				Type& memPos = GetParamValue(params[2]);
 
 #if LOG_INTCODE
 				std::cout << "MEM[" << memPos << "] = " << lhs << " == " << rhs << (lhs == rhs ? " (TRUE)" : " (FALSE)") << std::endl;
 #endif
 
 				memPos = lhs == rhs ? 1 : 0;
+				break;
+			}
+			case 9: // Adjust Relative Base
+			{
+				params = GetNextInstructionParams(1, paramModes);
+				const Type val = GetParamValue(params[0]);
+
+#if LOG_INTCODE
+				std::cout << "RELATIVE_BASE += " << val << std::endl;
+#endif
+
+				m_RelativeBase += val;
 				break;
 			}
 			case 99: // Halt And Catch Fire
@@ -215,17 +228,26 @@ void IntcodeComputer::ExecuteProgram()
 	}
 }
 
-IntcodeComputer::ParameterList IntcodeComputer::GetNextInstructionParams(int numParams, int parameterModes)
+IntcodeComputer::ParameterList IntcodeComputer::GetNextInstructionParams(Type numParams, Type parameterModes)
 {
 	ParameterList parameters;
 	parameters.reserve(numParams);
 
-	for (int paramOffset = 1; paramOffset <= numParams; ++paramOffset)
+	for (Type paramOffset = 1; paramOffset <= numParams; ++paramOffset)
 	{
-		const int nextParamMode = parameterModes % 10;
+		const Type nextParamMode = parameterModes % 10;
 		
-		const ParameterMode mode = nextParamMode == 0 ? ParameterMode::Position : ParameterMode::Immediate;
-		const int value = m_Memory[m_InstructionPointer + paramOffset];
+		ParameterMode mode = ParameterMode::Position;
+		if (nextParamMode == 1)
+		{
+			mode = ParameterMode::Immediate;
+		}
+		else if (nextParamMode == 2)
+		{
+			mode = ParameterMode::Relative;
+		}
+
+		const Type value = m_Memory[m_InstructionPointer + paramOffset];
 		parameters.emplace_back(mode, value);
 
 		parameterModes /= 10;
@@ -234,14 +256,41 @@ IntcodeComputer::ParameterList IntcodeComputer::GetNextInstructionParams(int num
 	return parameters;
 }
 
-int& IntcodeComputer::GetParamValue(Parameter param)
+IntcodeComputer::Type& IntcodeComputer::GetParamValue(Parameter param)
 {
-	return param.first == ParameterMode::Position ? m_Memory[param.second] : param.second;
+	switch (param.first)
+	{
+		case (ParameterMode::Position):
+		{
+			if (param.second >= m_Memory.size())
+			{
+				m_Memory.resize(param.second + 1);
+			}
+
+			return m_Memory[param.second];
+			break;
+		}
+		case (ParameterMode::Immediate):
+		{
+			return param.second;
+			break;
+		}
+		case (ParameterMode::Relative):
+		{
+			const Type memPos = param.second + m_RelativeBase;
+			if (memPos >= m_Memory.size())
+			{
+				m_Memory.resize(memPos + 1);
+			}
+			return m_Memory[memPos];
+			break;
+		}
+	}
 }
 
 void IntcodeComputer::OutputMemory()
 {
-	for (const int& value : m_Memory)
+	for (const Type& value : m_Memory)
 	{
 		std::cout << value << ",";
 	}

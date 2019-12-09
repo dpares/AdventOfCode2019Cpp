@@ -7,13 +7,15 @@
 class IntcodeComputer
 {
 public:
+	using Type = long long int;
+
 	IntcodeComputer() = default;
-	IntcodeComputer(std::deque<int>* pipe) : m_AmplifiersPipe(pipe) {}
+	IntcodeComputer(std::deque<Type>* pipe) : m_AmplifiersPipe(pipe) {}
 	
 	void LoadProgram(std::string input);
 
-	int GetResult() const;
-	void SetNounAndVerb(int noun, int verb);
+	Type GetResult() const;
+	void SetNounAndVerb(Type noun, Type verb);
 
 	void ExecuteProgram();
 	void OutputMemory();
@@ -24,23 +26,26 @@ private:
 	enum class ParameterMode
 	{
 		Position,
-		Immediate
+		Immediate,
+		Relative,
 	};
 
-	using Parameter = std::pair<ParameterMode, int>;
+	using Parameter = std::pair<ParameterMode, Type>;
 	using ParameterList = std::vector<Parameter>;
 
-	ParameterList GetNextInstructionParams(int numParams, int parameterModes);
-	int& GetParamValue(Parameter param);
+	ParameterList GetNextInstructionParams(Type numParams, Type parameterModes);
+	Type& GetParamValue(Parameter param);
 
 private:
-	std::vector<int> m_Memory;
-	unsigned int m_InstructionPointer = 0;
+	std::vector<Type> m_Memory;
+	Type m_InstructionPointer = 0;
 	
-	std::deque<int>* m_AmplifiersPipe;
+	std::deque<Type>* m_AmplifiersPipe;
 
-	int m_PausedInstructionPointer = -1;
+	Type m_PausedInstructionPointer = -1;
 	bool m_HasReceivedFirstInput = false;
 	bool m_IsInFeedbackLoop = false;
 	bool m_HasHalted = false;
+
+	Type m_RelativeBase = 0;
 };

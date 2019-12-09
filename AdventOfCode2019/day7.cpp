@@ -39,14 +39,14 @@ void Day7::ChallengeA()
 	std::string inputString;
 	m_Input >> inputString;
 
-	std::deque<int> amplifiersPipe;
+	std::deque<IntcodeComputer::Type> amplifiersPipe;
 	std::vector<int> possibleSettings{ 0,1,2,3,4 };
 	std::vector<std::vector<int>> settingsPermutations = GetPermutations(possibleSettings);
 	int maxValue = 0;
 
 	for (const auto& permutation : settingsPermutations)
 	{
-		int lastAmplifierOutput = 0;
+		IntcodeComputer::Type lastAmplifierOutput = 0;
 		for (int ampIdx = 0; ampIdx < NUM_AMPLIFIERS; ++ampIdx)
 		{
 			IntcodeComputer amplifierComputer(&amplifiersPipe);
@@ -82,9 +82,9 @@ void Day7::ChallengeB()
 	{
 		std::vector<IntcodeComputer> amplifiers;
 		amplifiers.reserve(5);
-		std::deque<int> amplifiersPipe;
+		std::deque<IntcodeComputer::Type> amplifiersPipe;
 
-		int lastAmplifierOutput = 0;
+		IntcodeComputer::Type lastAmplifierOutput = 0;
 		
 		for (int ampIdx = 0; ampIdx < NUM_AMPLIFIERS; ++ampIdx)
 		{

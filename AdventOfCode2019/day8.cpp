@@ -7,6 +7,10 @@ namespace
 	constexpr int WIDTH = 25;
 	constexpr int HEIGHT = 6;
 	constexpr int LAYER_SIZE = WIDTH * HEIGHT;
+
+	constexpr char BLACK_PIXEL = '0';
+	constexpr char WHITE_PIXEL = '1';
+	constexpr char TRANSPARENT_PIXEL = '2';
 }
 
 Day8::LayerArity Day8::GetLayerArity(const char* layerData) const
@@ -17,17 +21,17 @@ Day8::LayerArity Day8::GetLayerArity(const char* layerData) const
 	{
 		switch (*dataPtr)
 		{
-			case ('0'):
+			case (BLACK_PIXEL):
 			{
 				++arity.m_Zeroes;
 				break;
 			}
-			case ('1'):
+			case (WHITE_PIXEL):
 			{
 				++arity.m_Ones;
 				break;
 			}
-			case ('2'):
+			case (TRANSPARENT_PIXEL):
 			{
 				++arity.m_Twos;
 				break;
@@ -47,17 +51,17 @@ void Day8::PrintImage(const char* layerData) const
 	{
 		switch (*dataPtr)
 		{
-			case ('0'):
+			case (BLACK_PIXEL):
 			{
 				std::cout << '.';
 				break;
 			}
-			case ('1'):
+			case (WHITE_PIXEL):
 			{
 				std::cout << '#';
 				break;
 			}
-			case ('2'):
+			case (TRANSPARENT_PIXEL):
 			{
 				std::cout << '?';
 				break;
@@ -104,7 +108,7 @@ void Day8::ChallengeB()
 	while (m_Input.get(pixelData))
 	{
 		char imagePixel = imageData[pixelIdx];
-		if (imagePixel == '2' && pixelData != '2')
+		if (imagePixel == TRANSPARENT_PIXEL && pixelData != TRANSPARENT_PIXEL)
 		{
 			imageData[pixelIdx] = pixelData;
 		}
