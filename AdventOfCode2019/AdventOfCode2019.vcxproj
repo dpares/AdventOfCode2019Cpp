@@ -154,6 +154,7 @@
     <ClInclude Include="challengefactory.h" />
     <ClInclude Include="day1.h" />
     <ClInclude Include="day10.h" />
+    <ClInclude Include="day11.h" />
     <ClInclude Include="day2.h" />
     <ClInclude Include="day3.h" />
     <ClInclude Include="day4.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="dailychallenge.cpp" />
     <ClCompile Include="day1.cpp" />
     <ClCompile Include="day10.cpp" />
+    <ClCompile Include="day11.cpp" />
     <ClCompile Include="day2.cpp" />
     <ClCompile Include="day3.cpp" />
     <ClCompile Include="day4.cpp" />

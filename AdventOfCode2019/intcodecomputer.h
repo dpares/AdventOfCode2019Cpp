@@ -21,6 +21,7 @@ public:
 	void OutputMemory();
 
 	bool GetHasHalted() const { return m_HasHalted; }
+	void SetFeedbackLoopMode(bool value) { m_IsInFeedbackLoop = value; }
 
 private:
 	enum class ParameterMode
