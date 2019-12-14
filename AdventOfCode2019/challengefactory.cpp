@@ -13,6 +13,7 @@
 #include "day10.h"
 #include "day11.h"
 #include "day12.h"
+#include "day13.h"
 
 std::unique_ptr<DailyChallenge> ChallengeFactory::GetChallengeForDay(unsigned int day)
 {
@@ -78,6 +79,11 @@ std::unique_ptr<DailyChallenge> ChallengeFactory::GetChallengeForDay(unsigned in
 		case 12:
 		{
 			challenge = std::make_unique<Day12>();
+			break;
+		}
+		case 13:
+		{
+			challenge = std::make_unique<Day13>();
 			break;
 		}
 	}

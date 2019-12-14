@@ -15,12 +15,14 @@ public:
 	void LoadProgram(std::string input);
 
 	Type GetResult() const;
+	void SetMemoryAtPos(size_t index, Type value) { m_Memory[index] = value; }
 	void SetNounAndVerb(Type noun, Type verb);
 
 	void ExecuteProgram();
 	void OutputMemory();
 
 	bool GetHasHalted() const { return m_HasHalted; }
+	bool GetWantsInput() const { return m_WantsInput; }
 	void SetFeedbackLoopMode(bool value) { m_IsInFeedbackLoop = value; }
 
 private:
@@ -47,6 +49,7 @@ private:
 	bool m_HasReceivedFirstInput = false;
 	bool m_IsInFeedbackLoop = false;
 	bool m_HasHalted = false;
+	bool m_WantsInput = false;
 
 	Type m_RelativeBase = 0;
 };

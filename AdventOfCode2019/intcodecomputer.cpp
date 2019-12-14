@@ -89,6 +89,7 @@ void IntcodeComputer::ExecuteProgram()
 					if (m_AmplifiersPipe->empty())
 					{
 						m_PausedInstructionPointer = m_InstructionPointer;
+						m_WantsInput = true;
 						return;
 					}
 
@@ -102,6 +103,11 @@ void IntcodeComputer::ExecuteProgram()
 						{
 							m_IsInFeedbackLoop = true;
 						}
+					}
+
+					if (m_WantsInput)
+					{
+						m_WantsInput = false;
 					}
 				}
 				else
