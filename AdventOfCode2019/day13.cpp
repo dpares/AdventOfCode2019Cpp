@@ -147,7 +147,7 @@ void Day13::ChallengeB()
 		
 		if (amplifierComputer.GetWantsInput())
 		{
-#if DEBUG GAME
+#if DEBUG_GAME
 			PrintGame();
 
 			char c;
@@ -155,7 +155,7 @@ void Day13::ChallengeB()
 #endif
 
 			// Give new Paddle direction
-			IntcodeComputer::Type paddleDir = 0;
+			int paddleDir = 0;
 			if (paddleX < ballX)
 			{
 				paddleDir = 1;
@@ -193,7 +193,7 @@ void Day13::ChallengeB()
 
 			amplifierComputer.ExecuteProgram();
 
-			const int thirdOutput = gamePipe.front();
+			const int thirdOutput = static_cast<int>(gamePipe.front());
 			gamePipe.pop_front();
 
 			if (isScoreUpdate)
