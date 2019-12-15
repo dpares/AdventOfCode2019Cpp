@@ -26,7 +26,7 @@ private:
 	{
 		std::size_t operator()(const Chemical& elem) const
 		{
-			return std::hash<int>{}(elem.m_Amount) * std::hash<std::string>{}(elem.m_Name);
+			return std::hash<std::string>{}(elem.m_Name) ^ std::hash<int>{}(elem.m_Amount);
 		}
 	};
 
@@ -34,7 +34,12 @@ private:
 	using ChemicalMap = std::unordered_map<Chemical, ChemicalList, ChemicalHash>;
 
 	void ParseInput();
-	int CalculateOreRequiredToGetFuel() const;
+
+	const Chemical* FindChemicalByName(const std::string& name) const;
+
+	void CalculateOreRequiredToGenerateChemical(int parentsAmount, const Chemical& chemical, ChemicalList& productList);
+	int CalculateOreRequiredToGenerateChemical(const std::string& name);
+
 
 private:
 	ChemicalMap m_ChemicalMap;
