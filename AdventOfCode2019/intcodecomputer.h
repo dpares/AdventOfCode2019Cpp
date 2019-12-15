@@ -15,6 +15,7 @@ public:
 	void LoadProgram(std::string input);
 
 	Type GetResult() const;
+	Type GetPosAt(size_t index) const { return m_Memory[index]; }
 	void SetMemoryAtPos(size_t index, Type value) { m_Memory[index] = value; }
 	void SetNounAndVerb(Type noun, Type verb);
 

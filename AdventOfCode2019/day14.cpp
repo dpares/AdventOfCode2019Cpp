@@ -62,6 +62,8 @@ const Day14::Chemical* Day14::FindChemicalByName(const std::string& name) const
 	return chemicalPtr;
 }
 
+
+// DOES NOT WORK FOR SAMPLES 4, FIVE NOR TEST
 void Day14::CalculateOreRequiredToGenerateChemical(int amountNeeded, const Chemical& chemical, ChemicalList& productList)
 {
 	const Chemical* parentPtr = FindChemicalByName(chemical.m_Name);
