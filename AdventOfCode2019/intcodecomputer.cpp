@@ -282,6 +282,7 @@ IntcodeComputer::Type& IntcodeComputer::GetParamValue(Parameter param)
 			break;
 		}
 		case (ParameterMode::Relative):
+		default:
 		{
 			const Type memPos = param.second + m_RelativeBase;
 			if (memPos >= m_Memory.size())
